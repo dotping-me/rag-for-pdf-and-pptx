@@ -1,9 +1,8 @@
 # NOTE: This is just an MVP
 
 from typing import Any, List
-from markitdown import MarkItDown
-
-import re
+from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import UnstructuredPowerPointLoader
 
 def main() -> bool:
     """
@@ -11,35 +10,28 @@ def main() -> bool:
     
     Steps:
         1. Get filepath from user input
+        2. Tokenize and create embeddings
     """
 
     # 1. Get file from user input
     filepath: str = input("Enter filepath: ")
     file_ext: str = filepath[len(filepath) - filepath[::-1].index("."):]
-    print(file_ext)
 
-    mdConverter = MarkItDown()
-    mdText: str = ""
-    if file_ext in ["pdf", "pptx"]:
+    if file_ext == "pdf":
         print("Converting PDF to MD")
-        
-        mdText = mdConverter.convert(r"{}".format(filepath)).text_content
+        loader = PyPDFLoader(filepath)
 
-        # HACKJOB: "<!-- Slide 1 -->" is set by default
-        lines: List[str] = mdText.split("\n")
-        for i, ln in enumerate(lines):
-            if "<!-- Slide number:" in ln:
-                lines[i] = "Slide " + ln[18: ln.index(">") - 2] + "\n---\n"
-
-        mdText = "\n".join(i for i in lines)
-        with open("test.md", "w") as f:
-            f.write(mdText)
+    elif file_ext == "pptx":
+        print("Converting PPTX to MD")
+        loader = UnstructuredPowerPointLoader(filepath)
 
     else:
         print("Unsupported File Format")
         return False
     
-    print(mdText)
+    data: Any = loader.load()
+    print(data)
+
     return True
 
 if __name__ == "__main__":
