@@ -7,8 +7,8 @@ class App:
         self.static_dir: str = os.path.join(os.path.dirname(__file__), "public")
 
     # API Layer
-    def api_hello_world(self) -> str:
-        return json.dumps({ "message": "Hello World!" })
+    def api_hello_world(self, username: str) -> str:
+        return json.dumps({ "message": f"Hello {username}!" })
 
     def home(self):
         """ Serves index.html """
@@ -19,7 +19,6 @@ class App:
             width = 1200,
             height = 800,
         )
-
 
     def run(self):
         """ Runs App, duh... """

@@ -1,4 +1,5 @@
-# NOTE: This is just an MVP
+# TODO: Break file into modules
+# TODO: Setup args parsing (CLI tooling)
 
 from typing import List, Tuple, Optional
 

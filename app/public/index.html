@@ -4,22 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>RAG For Lecture Notes</title>
+    <title>This won't be seen so don't bother</title>
 </head>
 
 <body>
     <h1 id="welcome"></h1>
+    <form name="someForm">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username">
+        <input type="submit" value="Send">
+    </form>
+
     <script defer>
         
         // API layer ready
-        window.addEventListener("pywebviewready", async (e) => {
-            let apiCall = window.pywebview.api.api_hello_world().then(
-                res => {
-                    let json = JSON.parse(res);
-                    console.log(json);
-                    document.getElementById("welcome").innerText = json.message;
-                }
-            );
+        window.addEventListener("pywebviewready", async (initialLoadEvent) => {
+            let someForm = document.forms.someForm;
+            someForm.addEventListener("submit", async(e) => {
+                e.preventDefault();
+
+                let apiCall = window.pywebview.api.api_hello_world(someForm.username.value.trim()).then(
+                    res => {
+                        let json = JSON.parse(res);
+                        console.log(json);
+                        document.getElementById("welcome").innerText = json.message;
+                    }
+                );
+            });
         });
 
     </script>
