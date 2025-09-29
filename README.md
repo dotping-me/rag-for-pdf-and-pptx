@@ -14,3 +14,5 @@ Yes.
 I used the following resources to learn how to implement such a system:
 - [RAG + Langchain Python Project: Easy AI/Chat For Your Docs](https://www.youtube.com/watch?v=tcqEUSNCn8I)
 - [Chroma Python Basics](https://www.youtube.com/watch?v=yvsmkx-Jaj0)
+- [Chroma Python Basics](https://www.youtube.com/watch?v=yvsmkx-Jaj0)
+- [Build a RAG in 10 minutes! | Python, ChromaDB, OpenAI](https://www.youtube.com/watch?v=JfSmffOyV-8)

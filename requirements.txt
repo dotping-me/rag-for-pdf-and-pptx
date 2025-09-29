@@ -1,3 +1,4 @@
+argparse==1.4.0
 langchain==0.3.27
 langchain-core==0.3.76
 langchain-text-splitters==0.3.11
@@ -8,3 +9,6 @@ pypdf==6.1.1                    # For PDFS
 unstructured==0.18.15           # For PDFs
 python-magic==0.4.27
 python-pptx==1.0.2
+
+# For GUI
+pywebview==6.0

@@ -11,7 +11,7 @@ from langchain_community.document_loaders import PyPDFLoader, UnstructuredPowerP
 from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain.vectorstores.chroma import Chroma
 
-import shutil, os
+import argparse, shutil, os
 
 CHORMA_PATH: str = "chroma_db"
 
