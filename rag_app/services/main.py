@@ -16,6 +16,9 @@ import argparse, shutil, os
 
 CHORMA_PATH: str = "chroma_db"
 
+def test() -> str:
+    return "Hello World!"
+
 def load_document(filepath: str) -> Optional[List[Document]]:
     """
     Step 1: Getting file contents and loading them into a document
@@ -24,7 +27,7 @@ def load_document(filepath: str) -> Optional[List[Document]]:
     if (not filepath) or (not isinstance(filepath, str)):
         return
 
-    file_ext: str = filepath[len(filepath) - filepath[::-1].index("."):]
+    file_ext: str = filepath.split(".")[-1]
     if file_ext == "pdf":
         print("Converting PDF to MD")
         loader = PyPDFLoader(filepath)
