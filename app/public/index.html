@@ -8,11 +8,11 @@
 </head>
 
 <body>
-    <h1 id="welcome"></h1>
     <form name="someForm">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username">
+        <input type="file" name="inputForRAG" id="inputForRAG">
         <input type="submit" value="Send">
+
+        <p id="feedback"></p>
     </form>
 
     <script defer>
@@ -20,16 +20,38 @@
         // API layer ready
         window.addEventListener("pywebviewready", async (initialLoadEvent) => {
             let someForm = document.forms.someForm;
+            let feedback = document.getElementById("feedback");
+
             someForm.addEventListener("submit", async(e) => {
                 e.preventDefault();
+                
+                // 1. Validate uploaded file
 
-                let apiCall = window.pywebview.api.api_hello_world(someForm.username.value.trim()).then(
-                    res => {
-                        let json = JSON.parse(res);
-                        console.log(json);
-                        document.getElementById("welcome").innerText = json.message;
-                    }
-                );
+                // 1.1 Must upload file
+                const fileInput = someForm.inputForRAG;
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    feedback.innerText = "Please upload a file!"
+                    return;
+                }
+
+                // 1.2 Validate file type
+                const file = fileInput.files[0];
+
+                // 2. Convert uploaded file into bytes to send to backend
+                try {
+                    const bytes = new Uint8Array(await file.arrayBuffer());
+                    const fname = file.name;
+
+                    let res = await window.pywebview.api.api_rag_service(
+                        { name: fname, bytes: Array.from(bytes) }
+                    );
+
+                    res = JSON.parse(json);
+                    console.log(res);
+
+                } catch(err) {
+                    console.log(err);
+                }
             });
         });
 
