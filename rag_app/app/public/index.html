@@ -5,30 +5,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>This won't be seen so don't bother</title>
+
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        form {
+            display: inline-block;
+        }
+
+        button:disabled,
+        input:disabled {
+            opacity: 0.5;
+        }
+        
+        #rag-container {
+            width: 100%;
+            height: 100%;
+            background: #f3f0f0;
+        }
+
+        #doc-form {
+            width: 64%;
+            height: auto;
+            padding: 0.5rem;
+
+            background: #fff;
+            border: none;
+            border-radius: 12px;
+            outline: none;
+            box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        #doc-input-wrapper {
+            padding: 0.5rem 1rem;
+            border: 2px dashed #2f58ee;
+            border-radius: 8px;
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #doc-input-wrapper > * {
+            width: 80%;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+
+            border: 5px solid #000;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
 <body>
-    <form name="someForm">
-        <input type="file" name="inputForRAG" id="inputForRAG">
-        <input type="submit" value="Load">
+    <section id="rag-container">
+        <form id="doc-form" name="docForm">
+            <div id="doc-input-wrapper">
+                <p id="doc-input-instruction">Upload PDF or Powerpoint</p>
+                
+                <div id="docform-btn-container">
+                    <button id="load-doc-btn" type="button">Choose File</button>
+                    
+                    <input id="doc-submit-btn" name="docSubmit" type="submit" value="Load">
+                    <input id="doc-reset-btn" name="docReset" type="reset" value="Clear">
 
-        <p id="feedback"></p>
-    </form>
+                    <span id="load-doc-spinner" class="loader" aria-hidden="true"></span>
+                </div>
+                
+                <input hidden id="doc-input" type="file" name="docInput" id="docInput" accept=".pdf,.pptx">
+            </div>
+
+            <p id="feedback"></p>
+        </form>
+
+        <div id="query-doc-container">
+            <form name="queryDocForm">
+                <input type="text" name="queryDocTextInput" id="query-doc-text-input">
+            </form>
+
+            <div id="query-doc-results">
+                <p>No Results Yet!</p>
+            </div>
+        </div>
+    </section>
 
     <script defer>
-        
-        // API layer ready
+        const loadingSpinner = document.getElementById("load-doc-spinner");
+        loadingSpinner.style.display = "none";
+
+        // Form Handling
+        const docForm = document.forms.docForm;
+        const docInstruction = document.getElementById("doc-input-instruction");
+        const fileInput = docForm.docInput;
+        const loadDocBtn = document.getElementById("load-doc-btn");
+        const docSubmit = document.getElementById("doc-submit-btn");
+        const docReset = document.getElementById("doc-reset-btn");
+
+        docSubmit.disabled = true;
+        docReset.disabled = true;
+
+        // Toggle loading spinner
+        const toggleSpinner = () => {
+            const spinnerStatus = loadingSpinner.style.display;
+
+            // Show spinner (Hides all buttons)
+            if (spinnerStatus === "none") {
+                loadDocBtn.style.display = "none";
+                docSubmit.style.display = "none";
+                docReset.style.display = "none";
+
+                loadingSpinner.style.display = "inline-block";
+                return;
+            }
+
+            // Hide spinner (Show all buttons)
+            loadDocBtn.style.display = "inline-block";
+            docSubmit.style.display = "inline-block";
+            docReset.style.display = "inline-block";
+
+            loadingSpinner.style.display = "none";
+            return;
+        };
+
+        // Open file dialog
+        loadDocBtn.addEventListener("click", (e) => {
+            fileInput.click();
+        });
+
+        // Update text to filename when file is uploaded
+        fileInput.addEventListener("change", (e) => {
+            docInstruction.textContent = e.target.files[0].name;
+            docSubmit.disabled = false;
+            docReset.disabled = false;
+        });
+
+        // Form is cleared
+        docForm.addEventListener("reset", (e) => {
+            docInstruction.textContent = "Upload PDF or Powerpoint";
+            docSubmit.disabled = true;
+            docReset.disabled = true;
+        });
+
+        // Form is submitted
         window.addEventListener("pywebviewready", async (initialLoadEvent) => {
-            let someForm = document.forms.someForm;
             let feedback = document.getElementById("feedback");
 
-            someForm.addEventListener("submit", async(e) => {
-                e.preventDefault();
-                
+            docForm.addEventListener("submit", async(e) => {
+                e.preventDefault();    
+                toggleSpinner();
+            
                 // 1. Validate uploaded file
 
                 // 1.1 Must upload file
-                const fileInput = someForm.inputForRAG;
                 if (!fileInput.files || fileInput.files.length === 0) {
                     feedback.innerText = "Please upload a file!"
                     return;
@@ -54,7 +205,8 @@
                 }
 
                 // 3. Reset the form
-                someForm.reset();
+                docForm.reset();
+                toggleSpinner();
             });
         });
 

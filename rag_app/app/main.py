@@ -9,8 +9,7 @@ class App:
         self.__static_dir: str = os.path.join(os.path.dirname(__file__), "public")
         self.__upload_dir: str = os.path.join(os.path.dirname(__file__), "../services/uploads")
 
-        # Creates upload directory if it doesn't exist
-        os.makedirs(self.__upload_dir, exist_ok = True)
+        os.makedirs(self.__upload_dir, exist_ok = True) # Creates upload directory if it doesn't exist
 
     # API Layer
     def api_rag_load_doc(self, json_obj: Dict[str, Any]) -> str:
@@ -57,8 +56,8 @@ class App:
         self.window = webview.create_window(
             title = "Home",
             url = os.path.join(self.__static_dir, "index.html"),
-            width = 1200,
-            height = 800,
+            width = 720,
+            height = 480,
         )
 
     def run(self):
